@@ -1,3 +1,8 @@
+var controllers = {
+	gameController: 'GameController',
+
+};
+
 requirejs.config({
 	baseUrl: 'app/js',
 	paths: {
@@ -5,7 +10,7 @@ requirejs.config({
 	}
 });
 
-requirejs(['jquery', 'socket', 'mustache'],
+requirejs(['includes/jquery', 'includes/socket', 'includes/mustache'],
 	function ($, socket, mustache) {
 		
 	});
