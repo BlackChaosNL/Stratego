@@ -1,0 +1,29 @@
+{
+  "name": "stratego",
+  "version": "1.0.0",
+  "description": "A stratego game in JS",
+  "main": "index.html",
+  "dependencies": {
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-dest": "^0.2.3",
+    "gulp-htmlmin": "^3.0.0",
+    "gulp-livereload": "^3.8.1",
+    "gulp-sass": "^3.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BlackChaosNL/Stratego.git"
+  },
+  "author": "Patrick Spek & Jeroen Vijgen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BlackChaosNL/Stratego/issues"
+  },
+  "homepage": "https://github.com/BlackChaosNL/Stratego#readme"
+}

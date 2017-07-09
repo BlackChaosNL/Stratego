@@ -1,5 +1,7 @@
-define(['jquery', 'socket', 'includes/mustache'], function ($, socket, mustache) {
-	$(function () {
-		$('body').html('<b>Hi!</b>');
+require(['jquery', 'socket', 'includes/mustache', 'controllers/ApplicationController'],
+	function ($, socket, mustache, material, ApplicationController) {
+		console.log(material);
+		$(function () {
+
+		});
 	});
-});

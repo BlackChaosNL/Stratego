@@ -1,5 +1,3 @@
-var GameController = {
-	view: '',
+function GameController() {
+	return this;
 }
-
-exports = GameController;
