@@ -1,18 +1,16 @@
-function LoginController() {
+var LoginController = function () {
 	var _this = this,
 		view = 'rhel/html/login.html';
-}
-
-LoginController.prototype = {
-	load: function (args) {
+	this.load = function (args) {
+		console.log('Yay it works!');
 		$("#content").load(view).then(function (result) {
 			_this.setBindings();
 		});
-	},
-	setBindings: function () {
+	};
+	this.setBindings = function () {
 
-	},
-	checkApiKey: function () {
+	};
+	this.checkApiKey = function () {
 
-	}
-}
+	};
+};
