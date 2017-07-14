@@ -1,0 +1,29 @@
+.container {
+	span.right {
+		float: right;
+	}
+	.message {
+		margin: 10px 0px;
+		padding: 12px;
+	}
+	.isInfo {
+		color: #00529B;
+		background-color: #BDE5F8;
+	}
+	.isSuccess {
+		color: #4F8A10;
+		background-color: #DFF2BF;
+	}
+	.isWarning {
+		color: #9F6000;
+		background-color: #FEEFB3;
+	}
+	.isError {
+		color: #D8000C;
+		background-color: #FFBABA;
+	}
+}
+
+nav .brand-logo {
+	padding-left: 15px;
+}

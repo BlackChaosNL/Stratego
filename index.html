@@ -1,9 +1,12 @@
+<!DOCTYPE html>
 <html>
 
 <head>
-	
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+	    crossorigin="anonymous"></script>
 	<script src="./rhel/js/app.js"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.99.0/css/materialize.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="./rhel/css/app.css">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,8 +14,13 @@
 
 <body>
 	<nav class="light-blue lighten-1" role="navigation">
+		<div class="nav-wrapper">
+			<a href="#" class="brand-logo">Stratego</a>
+			<ul id="nav-mobile" class="right hide-on-med-and-down">
+			</ul>
+		</div>
 	</nav>
-	<div id="content"></div>
+	<div id="content" class="container"></div>
 	<div id="footer"></div>
 	<script>
 		app = new ApplicationController();
