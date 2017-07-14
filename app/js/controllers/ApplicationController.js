@@ -17,7 +17,6 @@ var ApplicationController = function () {
 		});
 	};
 	this.switchController = function (args) {
-		console.log(this);
 		this._currentController = this._allControllers[args.selectedController];
 		this._currentController.load(args);
 	};

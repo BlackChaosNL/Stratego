@@ -18,8 +18,7 @@ var LoginController = function () {
 			event.stopPropagation();
 			_this.api.login($("#apiKey").val()).then(function (e) {
 				if (!e.ok) {
-					$("div.message").addClass("isError");
-					$("div.message").html(e.message.response.message);
+					$("div.message").html(e.message.response.message).addClass("isError");
 					return;
 				}
 				_this.sw.switchController({
