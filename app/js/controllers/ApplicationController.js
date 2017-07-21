@@ -5,8 +5,7 @@ var ApplicationController = function () {
 		LoginController: new LoginController(),
 		ApiController: new ApiController(),
 		GameController: new GameController(),
-		GameListController: new GameListController(),
-		ApplicationController: this
+		GameListController: new GameListController()
 	};
 	this.run = function () {
 		this._currentController = this._allControllers.LoginController;
