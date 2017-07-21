@@ -1,8 +1,7 @@
 var LoginController = function () {
 	var _this = this,
 		view = "rhel/html/login/login.html",
-		api = {},
-		sw = {};
+		api, sw;
 
 	this.load = function (args) {
 		this._this = this;
@@ -23,8 +22,8 @@ var LoginController = function () {
 				}
 				_this.sw.switchController({
 					selectedController: 'GameListController',
-					applicationController: _this.sw,
-					apiController: _this.api
+					apiController: _this.api,
+					applicationController: _this.sw
 				});
 			});
 		});
