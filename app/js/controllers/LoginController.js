@@ -13,6 +13,7 @@ var LoginController = function () {
 	};
 
 	this.setBindings = function () {
+		this._this = this;
 		$("button#login").click(function (event) {
 			event.stopPropagation();
 			_this.api.login($("#apiKey").val()).then(function (e) {

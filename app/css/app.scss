@@ -1,3 +1,16 @@
+@media(min-width: 992px) {
+	html {
+		padding-left: 310px;
+		padding-right: 10px;
+	}
+}
+
+nav .brand-logo {
+	text-align: center;
+	margin-top: 32px;
+	margin-bottom: 80px;
+}
+
 .container {
 	span.right {
 		float: right;
@@ -22,8 +35,4 @@
 		color: #D8000C;
 		background-color: #FFBABA;
 	}
-}
-
-nav .brand-logo {
-	padding-left: 15px;
 }

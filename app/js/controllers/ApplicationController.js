@@ -11,7 +11,7 @@ var ApplicationController = function () {
 		this._currentController = this._allControllers.LoginController;
 		this.switchController({
 			selectedController: 'LoginController',
-			applicationController: this._allControllers.ApplicationController,
+			applicationController: this,
 			apiController: this._allControllers.ApiController
 		});
 	};
