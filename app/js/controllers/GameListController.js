@@ -1,12 +1,14 @@
 var GameListController = function () {
-	var api, ac, _this = this;
+	var api, ac;
 	this.load = function (args) {
 		this.api = args.apiController;
 		this.ac = args.applicationController;
-		this.setBindings();
+		this.loadMenu();
 	};
 
-	this.setBindings = function () {
-		// Load up links in here :D
+	this.loadMenu = function () {
+		this.api.getAllGames().then(function (e) {
+			console.log(e);
+		});
 	};
 };

@@ -50,6 +50,23 @@ var ApiController = function () {
 		});
 	};
 
+	this.getAllGames = function () {
+		return xhrRequest({
+			method: this.methods.get,
+			url: this.baseUri + this.routes.games + "?api_key=" + this.apiKey
+		}).then(function (e) {
+			return {
+				ok: true,
+				message: JSON.parse(e)
+			};
+		}, function (err) {
+			return {
+				ok: false,
+				message: err
+			};
+		});
+	};
+
 	this.getGameById = function (id) {
 		return xhrRequest({
 			method: this.methods.get,
