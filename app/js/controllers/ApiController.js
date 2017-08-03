@@ -30,7 +30,7 @@ var ApiController = function () {
 		});
 	};
 
-	this.createGame = function (aiBoolean) {
+	this.createGame = function (aiBoolean = true) {
 		return xhrRequest({
 			method: this.methods.post,
 			url: this.baseUri + this.routes.games + "?api_key=" + this.apiKey,
@@ -51,13 +51,15 @@ var ApiController = function () {
 	};
 
 	this.getAllGames = function () {
+		GameList = new GameList();
 		return xhrRequest({
 			method: this.methods.get,
 			url: this.baseUri + this.routes.games + "?api_key=" + this.apiKey
 		}).then(function (e) {
+			GameList.setGameList(JSON.parse(e));
 			return {
 				ok: true,
-				message: JSON.parse(e)
+				message: GameList
 			};
 		}, function (err) {
 			return {

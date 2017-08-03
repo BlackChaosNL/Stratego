@@ -26,11 +26,12 @@ function xhrRequest(opts) {
 			});
 		}
 		var params = opts.params;
-		if (params && typeof params === 'object') {
-			params = Object.keys(params).map(function (key) {
-				return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
-			}).join('&');
-		}
-		xhr.send(params);
+		//if (params && typeof params === 'object') {
+		//	params = Object.keys(params).map(function (key) {
+		//		return encodeURIComponent(key) + '=' + encodeURIComponent(params[key]);
+		//	}).join('&');
+		//}
+		xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
+		xhr.send(JSON.stringify(params));
 	});
 }
