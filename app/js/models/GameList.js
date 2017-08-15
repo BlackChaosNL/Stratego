@@ -1,11 +1,7 @@
-var GameList = function () {
-	var GameList;
+var GameList = function (GameList) {
+	var gl = GameList;
 
 	this.getGameList = function () {
-		return this.GameList;
-	};
-
-	this.setGameList = function (GameListArray) {
-		this.GameList = GameListArray;
+		return gl;
 	};
 };

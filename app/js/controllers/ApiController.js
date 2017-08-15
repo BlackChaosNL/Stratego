@@ -10,6 +10,7 @@ var ApiController = function () {
 		me: "/users/me",
 		games: "/games"
 	};
+	this.io = io.connect(this.baseUri, { query: 'api_key=' + this.apiKey });
 
 	this.login = function (apiKey) {
 		_this = this;
@@ -51,15 +52,13 @@ var ApiController = function () {
 	};
 
 	this.getAllGames = function () {
-		GameList = new GameList();
 		return xhrRequest({
 			method: this.methods.get,
 			url: this.baseUri + this.routes.games + "?api_key=" + this.apiKey
 		}).then(function (e) {
-			GameList.setGameList(JSON.parse(e));
 			return {
 				ok: true,
-				message: GameList
+				message: new GameList(JSON.parse(e))
 			};
 		}, function (err) {
 			return {
@@ -76,7 +75,7 @@ var ApiController = function () {
 		}).then(function (e) {
 			return {
 				ok: true,
-				message: e
+				message: JSON.parse(e)
 			};
 		}, function (err) {
 			return {

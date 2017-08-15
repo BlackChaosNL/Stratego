@@ -33,6 +33,19 @@ nav .brand-logo {
 }
 
 #content {
+	#gameBoard {
+		border-spacing: 3px;
+		border-collapse: separate;
+		tbody > tr > td {
+			background-color: #ADD8E6;
+			height: 80px;
+			width: 50px;
+		}
+		tbody > tr > td.isDisabled {
+			background-color: #67818a;
+			cursor: not-allowed;
+		}
+	}
 	span.right {
 		float: right;
 	}
