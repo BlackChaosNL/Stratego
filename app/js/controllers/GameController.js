@@ -49,9 +49,10 @@ var GameController = function () {
 		}
 	};
 
-	/**
-	* Board is a matrix of 10 x 10, one entry for each spot on the gameboard.
-	*/
+	//
+	// Only need to fill our side of the board, which consists of
+	// 4 rows of 10 columns.
+	//
 	this.fillGameBoard = function (gameId) {
 		// These pieces need to be placed, with their count
 		var pieces = {
@@ -71,12 +72,12 @@ var GameController = function () {
 
 		// Place each piece one by one
 		for (var code in pieces) {
-		    while (pieces[code] > 0) {
-			// TODO: Make the player able to place the piece
-			console.log("Need to place " + pieces[code] + " pieces more of type " + code);
+			while (pieces[code] > 0) {
+				// TODO: Make the player able to place the piece
+				console.log("Need to place " + pieces[code] + " pieces more of type " + code);
 
-			pieces[code]--;
-		    }
+				pieces[code]--;
+			}
 		}
 
 		// Create 4 rows of the board which we need to fill
