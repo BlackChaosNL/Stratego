@@ -119,15 +119,11 @@ var ApiController = function () {
 		});
 	};
 
-	this.postBoard = function (id, board) {
-	    console.log("POSTING")
-	    console.log(board)
+	this.postBoard = function (id, sendBoard) {
 		return xhrRequest({
 			method: this.methods.post,
 			url: this.baseUri + this.routes.games + "/" + id + "/start_board?api_key=" + this.apiKey,
-			params: {
-				board: board
-			}
+			params: sendBoard
 		}).then(function (e) {
 			return {
 				ok: true,
@@ -156,6 +152,16 @@ var ApiController = function () {
 				message: err
 			};
 		});
+	};
+
+	this.postGameMoves = function (id, move) {
+		return xhrRequest({
+			method: this.methods.post,
+			url: this.baseUri + this.routes.games + "/" + id + "/moves?api_key=" + this.apiKey,
+			params: {
+
+			}
+		}).then(function (e) { }, function (error) { });
 	};
 
 	this.setApiKey = function (apiKey) {
