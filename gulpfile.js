@@ -28,7 +28,7 @@ gulp.task('html', function () {
 
 gulp.task('imaging', function () {
 	return gulp.src('./app/img/**/*')
-		.pipe(imagemin())
+		.pipe(img())
 		.pipe(gulp.dest('./rhel/img'));
 });
 
