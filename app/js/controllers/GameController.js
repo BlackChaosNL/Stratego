@@ -70,6 +70,20 @@ var GameController = function () {
 			{ code: "B", name: "Bom", count: 6 }
 		];
 
+
+		// Unlock our side of the board
+		let enableState = [];
+
+		for (let y = 6; y < 10; y++) {
+			for (let x = 0; x < 10; x++) {
+				enableState.push({x: x, y: y});
+			}
+		}
+
+		this.changeBoardState({
+			enable: enableState
+		});
+
 		// Place each piece one by one
 		for (var i in pieces) {
 			piece = pieces[i];
@@ -101,10 +115,10 @@ var GameController = function () {
 		var GameBoard = $('table#gameBoard > tbody');
 		GameBoard.html("");
 		for (i = 0; i < 10; i++) {
-			GameBoard.append('<tr id="' + i + '">');
-			var row = $('tr#' + i);
+			GameBoard.append('<tr id="row-' + i + '">');
+			var row = $('tr#row-' + i);
 			for (n = 0; n < 10; n++) {
-				row.append('<td id="' + i + ',' + n + '" class="isDisabled"></td>');
+				row.append('<td id="col-' + i + '-' + n + '" class="isDisabled"></td>');
 			};
 			row.append('</tr>');
 		};
@@ -118,7 +132,7 @@ var GameController = function () {
 		if (state.enable === "all") {
 			for (i = 0; i < 10; i++) {
 				for (n = 0; n < 10; n++) {
-					$('#' + i + ',' + n).removeClass('isDisabled');
+					$('#col-' + i + '-' + n).removeClass('isDisabled');
 				}
 			}
 		}
@@ -126,20 +140,21 @@ var GameController = function () {
 		if (state.disable === "all") {
 			for (i = 0; i < 10; i++) {
 				for (n = 0; n < 10; n++) {
-					$('#' + i + ',' + n).addClass('isDisabled');
+					$('#col-' + i + '-' + n).addClass('isDisabled');
 				}
 			}
 		}
 
 		if (Array.isArray(state.enable)) {
 			state.enable.forEach(function (item) {
-				$('#' + item.x + ',' + item.y).removeClass('isDisabled');
+				console.log("Enabling " + item.y + "," + item.x);
+				$('#col-' + item.y + '-' + item.x).removeClass('isDisabled');
 			});
 		}
 
 		if (Array.isArray(state.disable)) {
 			state.disable.forEach(function (item) {
-				$('#' + item.x + ',' + item.y).addClass('isDisabled');
+				$('#col-' + item.y + '-' + item.x).addClass('isDisabled');
 			});
 		}
 	};
