@@ -40,6 +40,26 @@ nav .brand-logo {
 			background-color: #ADD8E6;
 			height: 80px;
 			width: 50px;
+
+			.has-unit {
+			    background-color: none;
+			    background-repeat: no-repeat;
+			    background-size: contain;
+			}
+
+			.has-1 { background-image: url(app/img/1.png); }
+			.has-2 { background-image: url(app/img/2.png); }
+			.has-3 { background-image: url(app/img/3.png); }
+			.has-4 { background-image: url(app/img/4.png); }
+			.has-5 { background-image: url(app/img/5.png); }
+			.has-6 { background-image: url(app/img/6.png); }
+			.has-7 { background-image: url(app/img/7.png); }
+			.has-8 { background-image: url(app/img/8.png); }
+			.has-9 { background-image: url(app/img/8.png); }
+			.has-B { background-image: url(app/img/B.png); }
+			.has-F { background-image: url(app/img/F.png); }
+			.has-O { background-image: url(app/img/O.png); }
+			.has-S { background-image: url(app/img/S.png); }
 		}
 		tbody > tr > td.isDisabled {
 			background-color: #67818a;
