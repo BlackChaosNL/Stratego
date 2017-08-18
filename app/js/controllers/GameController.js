@@ -55,28 +55,29 @@ var GameController = function () {
 	//
 	this.fillGameBoard = function (gameId) {
 		// These pieces need to be placed, with their count
-		var pieces = {
-			B: 6,
-			1: 1,
-			2: 1,
-			3: 2,
-			4: 3,
-			5: 4,
-			6: 4,
-			7: 4,
-			8: 5,
-			9: 8,
-			S: 1,
-			F: 1
-		};
+		var pieces = [
+			{ code: "F", name: "Vlag", count: 1 },
+			{ code: "S", name: "Spion", count: 1 },
+			{ code: "9", name: "Verkenner", count: 8 },
+			{ code: "8", name: "Mineur", count: 5 },
+			{ code: "7", name: "Sergeant", count: 4 },
+			{ code: "6", name: "Luitenant", count: 4 },
+			{ code: "5", name: "Kapitein", count: 4 },
+			{ code: "4", name: "Majoor", count: 3 },
+			{ code: "3", name: "Kolonel", count: 2 },
+			{ code: "2", name: "Generaal", count: 1 },
+			{ code: "1", name: "Maarschalk", count: 1 },
+			{ code: "B", name: "Bom", count: 6 }
+		];
 
 		// Place each piece one by one
-		for (var code in pieces) {
-			while (pieces[code] > 0) {
-				// TODO: Make the player able to place the piece
-				console.log("Need to place " + pieces[code] + " pieces more of type " + code);
+		for (var i in pieces) {
+			piece = pieces[i];
 
-				pieces[code]--;
+			while (piece.count > 0) {
+				console.log("Need to place " + piece.count + " pieces more of type " + piece.name);
+
+				piece.count--;
 			}
 		}
 
@@ -89,7 +90,7 @@ var GameController = function () {
 		];
 
 		// Send the board to the API
-		api.postBoard(gameId, board);
+		//api.postBoard(gameId, board);
 	};
 
 	this.makeMove = function () {
