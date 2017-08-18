@@ -23,9 +23,24 @@ var GameController = function () {
 				$('div.message').html('We haven\'t found a player yet, please be patient!').addClass("isInfo");
 				break;
 			case 'waiting_for_pieces':
-				_this.changeBoardState({
+				// Create a base board
+				_this.board = new Board();
+				_this.board.setBoard(
+				    [
+					['O',  'O',  'O',  'O',  'O',  'O',  'O',  'O',  'O',  'O'],
+					['O',  'O',  'O',  'O',  'O',  'O',  'O',  'O',  'O',  'O'],
+					['O',  'O',  'O',  'O',  'O',  'O',  'O',  'O',  'O',  'O'],
+					['O',  'O',  'O',  'O',  'O',  'O',  'O',  'O',  'O',  'O'],
+					[' ',  ' ',  ' ',  ' ',  ' ',  ' ',  ' ',  ' ',  ' ',  ' '],
+					[' ',  ' ',  ' ',  ' ',  ' ',  ' ',  ' ',  ' ',  ' ',  ' '],
+					['7',  'B',  '5',  '2',  '9',  '9',  '1',  '8',  '9',  'B'],
+					['B',  '7',  '9',  'S',  '4',  '5',  '8',  '5',  '3',  '9'],
+					['7',  'B',  '4',  '8',  '6',  '4',  '3',  '8',  '7',  '6'],
+					['B',  'F',  'B',  '5',  '9',  '6',  '6',  '9',  '9',  '8']
+				    ]
+				);
 
-				});
+				this.fillGameBoard(e.message.id, _this.board);
 				break;
 			case 'waiting_for_opponent_pieces':
 
@@ -51,8 +66,15 @@ var GameController = function () {
 		}
 	};
 
-	this.fillGameBoard = function (Board) {
+	/**
+	* Board is a matrix of 10 x 10, one entry for each spot on the gameboard.
+	*/
+    this.fillGameBoard = function (gameId, board) {
+	    console.log(board.getBoard());
+	    // Place pieces on the board
 
+	    // Send the board to the API
+	    api.postBoard(gameId, board.getOurSide());
 	};
 
 	this.makeMove = function () {

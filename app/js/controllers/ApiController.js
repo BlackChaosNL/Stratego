@@ -120,6 +120,8 @@ var ApiController = function () {
 	};
 
 	this.postBoard = function (id, board) {
+	    console.log("POSTING")
+	    console.log(board)
 		return xhrRequest({
 			method: this.methods.post,
 			url: this.baseUri + this.routes.games + "/" + id + "/start_board?api_key=" + this.apiKey,
