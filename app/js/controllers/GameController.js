@@ -23,24 +23,7 @@ var GameController = function () {
 				$('div.message').html('We haven\'t found a player yet, please be patient!').addClass("isInfo");
 				break;
 			case 'waiting_for_pieces':
-				// Create a base board
-				_this.board = new Board();
-				_this.board.setBoard(
-					[
-						['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-						['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-						['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-						['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
-						[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-						[' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '],
-						['7', 'B', '5', '2', '9', '9', '1', '8', '9', 'B'],
-						['B', '7', '9', 'S', '4', '5', '8', '5', '3', '9'],
-						['7', 'B', '4', '8', '6', '4', '3', '8', '7', '6'],
-						['B', 'F', 'B', '5', '9', '6', '6', '9', '9', '8']
-					]
-				);
-
-				this.fillGameBoard(e.message.id, _this.board);
+				this.fillGameBoard(e.message.id);
 				break;
 			case 'waiting_for_opponent_pieces':
 
@@ -69,12 +52,43 @@ var GameController = function () {
 	/**
 	* Board is a matrix of 10 x 10, one entry for each spot on the gameboard.
 	*/
-	this.fillGameBoard = function (gameId, board) {
-		console.log(board.getBoard());
-		// Place pieces on the board
+	this.fillGameBoard = function (gameId) {
+		// These pieces need to be placed, with their count
+		var pieces = {
+			B: 6,
+			1: 1,
+			2: 1,
+			3: 2,
+			4: 3,
+			5: 4,
+			6: 4,
+			7: 4,
+			8: 5,
+			9: 8,
+			S: 1,
+			F: 1
+		};
+
+		// Place each piece one by one
+		for (var code in pieces) {
+		    while (pieces[code] > 0) {
+			// TODO: Make the player able to place the piece
+			console.log("Need to place " + pieces[code] + " pieces more of type " + code);
+
+			pieces[code]--;
+		    }
+		}
+
+		// Create 4 rows of the board which we need to fill
+		var board = [
+			['7', 'B', '5', '2', '9', '9', '1', '8', '9', 'B'],
+			['B', '7', '9', 'S', '4', '5', '8', '5', '3', '9'],
+			['7', 'B', '4', '8', '6', '4', '3', '8', '7', '6'],
+			['B', 'F', 'B', '5', '9', '6', '6', '9', '9', '8']
+		];
 
 		// Send the board to the API
-		api.postBoard(gameId, board.getOurSide());
+		api.postBoard(gameId, board);
 	};
 
 	this.makeMove = function () {
@@ -122,7 +136,7 @@ var GameController = function () {
 		}
 
 		if (Array.isArray(state.disable)) {
-			state.disable.forEach(function () {
+			state.disable.forEach(function (item) {
 				$('#' + item.x + ',' + item.y).addClass('isDisabled');
 			});
 		}
