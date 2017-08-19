@@ -33,10 +33,8 @@ nav .brand-logo {
 }
 
 #content {
-	.piece-placement {
-		.selected {
-			background-color: blue;
-		}
+	.piece-placement.selected {
+		background-color: blue;
 	}
 
 	#gameBoard {
@@ -48,25 +46,29 @@ nav .brand-logo {
 			width: 50px;
 
 			.has-unit {
-			    background-color: none;
-			    background-repeat: no-repeat;
-			    background-size: contain;
-			}
 
-			.has-1 { background-image: url(app/img/1.png); }
-			.has-2 { background-image: url(app/img/2.png); }
-			.has-3 { background-image: url(app/img/3.png); }
-			.has-4 { background-image: url(app/img/4.png); }
-			.has-5 { background-image: url(app/img/5.png); }
-			.has-6 { background-image: url(app/img/6.png); }
-			.has-7 { background-image: url(app/img/7.png); }
-			.has-8 { background-image: url(app/img/8.png); }
-			.has-9 { background-image: url(app/img/8.png); }
-			.has-B { background-image: url(app/img/B.png); }
-			.has-F { background-image: url(app/img/F.png); }
-			.has-O { background-image: url(app/img/O.png); }
-			.has-S { background-image: url(app/img/S.png); }
+			}
 		}
+
+		tbody > tr > td.has-unit {
+			background-color: none;
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		tbody > tr > td.has-unit.has-1 { background-image: url(./../img/1.png); }
+		tbody > tr > td.has-unit.has-2 { background-image: url(./../img/2.png); }
+		tbody > tr > td.has-unit.has-3 { background-image: url(./../img/3.png); }
+		tbody > tr > td.has-unit.has-4 { background-image: url(./../img/4.png); }
+		tbody > tr > td.has-unit.has-5 { background-image: url(./../img/5.png); }
+		tbody > tr > td.has-unit.has-6 { background-image: url(./../img/6.png); }
+		tbody > tr > td.has-unit.has-7 { background-image: url(./../img/7.png); }
+		tbody > tr > td.has-unit.has-8 { background-image: url(./../img/8.png); }
+		tbody > tr > td.has-unit.has-9 { background-image: url(./../img/8.png); }
+		tbody > tr > td.has-unit.has-B { background-image: url(./../img/B.png); }
+		tbody > tr > td.has-unit.has-F { background-image: url(./../img/F.png); }
+		tbody > tr > td.has-unit.has-O { background-image: url(./../img/O.png); }
+		tbody > tr > td.has-unit.has-S { background-image: url(./../img/S.png); }
+
 		tbody > tr > td.isDisabled {
 			background-color: #67818a;
 			cursor: not-allowed;

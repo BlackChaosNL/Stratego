@@ -137,6 +137,7 @@ var GameController = function () {
 
 					// When no pieces are left, post the board
 					if (--piecesTotal < 1) {
+						console.log("Posting board to API");
 						api.postBoard(gameId, board);
 
 						// TODO: Reload page to go to the next step?
