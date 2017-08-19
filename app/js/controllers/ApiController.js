@@ -19,7 +19,6 @@ var ApiController = function () {
 			url: this.baseUri + this.routes.me + "?api_key=" + apiKey
 		}).then(function (e) {
 			_this.setApiKey(apiKey);
-			console.log(localStorage);
 			localStorage.setItem("avansApiKey", apiKey);
 			return {
 				ok: true,
