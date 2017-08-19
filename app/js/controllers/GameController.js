@@ -143,7 +143,13 @@ var GameController = function () {
 	};
 
 	this.makeMove = function (e) {
+		const that = this;
 		const board = e.message.board;
+		let selected = {
+			state: false,
+			x: 0,
+			y: 0
+		};
 
 		// Enable the tiles which are usable
 		this.changeBoardState({
@@ -156,19 +162,54 @@ var GameController = function () {
 			const row = board[y];
 
 			for (let x = 0; x < row.length; x++) {
-				const tile = $("#col-" + y + "-" + x);
+				const tile = that.getTile(y, x);
 				const col = row[x];
 
-				if (col == " ") {
-					continue;
+				// Draw the units
+				if (col != " ") {
+					tile.addClass("has-unit");
+					tile.addClass("has-" + col);
 				}
 
-				tile.addClass("has-unit");
-				tile.addClass("has-" + col);
+				// Bind a function to each tile
+				$(document).on("click", that.getTileString(y, x), function (e) {
+					// Allow selecting a unit
+					if (col != " " && col != "O") {
+						// Deselect a previously selected unit
+						if (selected.state) {
+							that.getTile(selected.y, selected.x).removeClass("selected");
+						}
+
+						selected = {
+							state: true,
+							x: x,
+							y: y
+						};
+
+						tile.addClass("selected");
+
+						return;
+					}
+
+					// FIXME: Allow deselecting a unit by clicking it again
+					//if (selected.state && selected.x == x && selected.y == y) {
+					//    console.log("romeving");
+					//	tile.removeClass("selected");
+
+					//	selected.state = false;
+
+					//	return;
+					//}
+
+					// Allow the player to select a tile to move to
+					if (selected.state && (col == " " || col == "O")) {
+						console.log("moving");
+						return;
+					}
+				});
 			}
 		}
 
-		// Allow the player to select a unit
 
 		// Allow the player to select a tile to move towards
 
@@ -221,4 +262,16 @@ var GameController = function () {
 			});
 		}
 	};
+
+	this.getTile = function (row, col) {
+		return $(this.getTileString(row, col));
+	}
+
+	this.getTileString = function (row, col) {
+		return "#col-" + row + "-" + col;
+	}
+
+	this.isMoveValid = function (unit, fromRow, fromCol, toRow, toCol) {
+		return false;
+	}
 };

@@ -68,6 +68,7 @@ nav .brand-logo {
 		tbody > tr > td.has-unit.has-F { background-image: url(./../img/F.png); }
 		tbody > tr > td.has-unit.has-O { background-image: url(./../img/O.png); }
 		tbody > tr > td.has-unit.has-S { background-image: url(./../img/S.png); }
+		tbody > tr > td.has-unit.selected { border: 2px solid red; }
 
 		tbody > tr > td.isDisabled {
 			background-color: #67818a;
