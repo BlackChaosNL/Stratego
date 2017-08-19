@@ -144,13 +144,13 @@ var GameController = function () {
 
 	this.makeMove = function (e) {
 		// Enable the tiles which are usable
-		_this.changeBoardState({
+		this.changeBoardState({
 			enable: "all",
 			disable: lakes
 		});
 
 		// Add all units as given by the API
-	    console.log(e)
+		console.log(e)
 
 		// Allow the player to select a unit
 
