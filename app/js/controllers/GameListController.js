@@ -29,7 +29,7 @@ var GameListController = function () {
 			$('#deleteAllGames').click(function () {
 				_this.api.deleteAllGames().then(function () { _this.setSideBarGameList(); });
 			});
-			e.message.getGameList().forEach(function () {
+			e.message.getGameList().forEach(function (i) {
 				_this.api.socket.on('statechange', function () {
 					_this.setSideBarGameList();
 				});
