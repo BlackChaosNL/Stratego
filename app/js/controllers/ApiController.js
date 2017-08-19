@@ -156,6 +156,16 @@ var ApiController = function () {
 		});
 	};
 
+	this.postGameMoves = function (id, move) {
+		return xhrRequest({
+			method: this.methods.post,
+			url: this.baseUri + this.routes.games + "/" + id + "/moves?api_key=" + this.apiKey,
+			params: {
+
+			}
+		}).then(function (e) { }, function (error) { });
+	};
+
 	this.setApiKey = function (apiKey) {
 		this.apiKey = apiKey;
 	};
