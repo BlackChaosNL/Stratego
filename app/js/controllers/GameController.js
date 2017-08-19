@@ -44,7 +44,7 @@ var GameController = function () {
 
 				break;
 			case 'my_turn':
-		    this.makeMove(e);
+				this.makeMove(e.message);
 				break;
 			case 'opponent_turn':
 				_this.changeBoardState({
@@ -142,9 +142,9 @@ var GameController = function () {
 		}
 	};
 
-	this.makeMove = function (e) {
+	this.makeMove = function (message) {
 		const that = this;
-		const board = e.message.board;
+		const board = message.board;
 		let selected = {
 			state: false,
 			x: 0,
@@ -169,6 +169,7 @@ var GameController = function () {
 				if (col != " ") {
 					tile.addClass("has-unit");
 					tile.addClass("has-" + col);
+					tile.data("unit", col);
 				}
 
 				// Bind a function to each tile
@@ -191,29 +192,41 @@ var GameController = function () {
 						return;
 					}
 
-					// FIXME: Allow deselecting a unit by clicking it again
-					//if (selected.state && selected.x == x && selected.y == y) {
-					//    console.log("romeving");
-					//	tile.removeClass("selected");
-
-					//	selected.state = false;
-
-					//	return;
-					//}
-
 					// Allow the player to select a tile to move to
 					if (selected.state && (col == " " || col == "O")) {
-						console.log("moving");
-						return;
+					    const move = that.isMoveValid(selected.y, selected.x, y, x);
+						if (!move.ok) {
+							console.warn("That move is invalid");
+
+							return;
+						}
+
+						const origin = that.getTile(selected.y, selected.x);
+
+						// Move the tile
+						tile.addClass("has-unit");
+						tile.addClass("has-" + origin.data("unit"));
+						tile.data("unit", origin.data("unit"));
+						origin.removeClass("has-unit");
+						origin.removeClass("has-" + origin.data("unit"));
+						origin.data("unit", null);
+
+						// Tell the API something changed
+						api.postGameMoves(message.id, {
+							type: move.type,
+							square: {
+								row: selected.y,
+								column: selected.x
+							},
+							square_to: {
+								row: y,
+								column: x
+							}
+						});
 					}
 				});
 			}
 		}
-
-
-		// Allow the player to select a tile to move towards
-
-		// Tell the API something changed
 	};
 
 	this.drawGameBoard = function () {
@@ -263,6 +276,16 @@ var GameController = function () {
 		}
 	};
 
+	this.calcDiff = function (i, j) {
+		const d = i - j;
+
+		if (d < 0) {
+			return -d;
+		}
+
+		return d;
+	}
+
 	this.getTile = function (row, col) {
 		return $(this.getTileString(row, col));
 	}
@@ -271,7 +294,25 @@ var GameController = function () {
 		return "#col-" + row + "-" + col;
 	}
 
-	this.isMoveValid = function (unit, fromRow, fromCol, toRow, toCol) {
-		return false;
+	this.isMoveValid = function (fromRow, fromCol, toRow, toCol) {
+		const from = this.getTile(fromRow, fromCol);
+		const to = this.getTile(toRow, toCol);
+
+		// Bombs are not allowed to move
+		if (to.data("B")) {
+			console.log("Bombs are not allowed to move");
+			return false;
+		}
+
+		// Tile should be in an allowed range
+		if (1 < this.calcDiff(fromRow, toRow) || 1 < this.calcDiff(fromCol, toCol)) {
+			console.log("Tile is not in range");
+			return false;
+		}
+
+		return {
+		    ok: true,
+		    type: (to.data("unit") == "O") ? "attack" : "move"
+		};
 	}
 };

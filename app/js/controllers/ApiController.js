@@ -160,9 +160,7 @@ var ApiController = function () {
 		return xhrRequest({
 			method: this.methods.post,
 			url: this.baseUri + this.routes.games + "/" + id + "/moves?api_key=" + this.apiKey,
-			params: {
-
-			}
+			params: move
 		}).then(function (e) { }, function (error) { });
 	};
 
