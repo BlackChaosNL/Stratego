@@ -143,6 +143,8 @@ var GameController = function () {
 	};
 
 	this.makeMove = function (e) {
+		const board = e.message.board;
+
 		// Enable the tiles which are usable
 		this.changeBoardState({
 			enable: "all",
@@ -150,7 +152,21 @@ var GameController = function () {
 		});
 
 		// Add all units as given by the API
-		console.log(e)
+		for (let y = 0; y < board.length; y++) {
+			const row = board[y];
+
+			for (let x = 0; x < row.length; x++) {
+				const tile = $("#col-" + y + "-" + x);
+				const col = row[x];
+
+				if (col == " ") {
+					continue;
+				}
+
+				tile.addClass("has-unit");
+				tile.addClass("has-" + col);
+			}
+		}
 
 		// Allow the player to select a unit
 
