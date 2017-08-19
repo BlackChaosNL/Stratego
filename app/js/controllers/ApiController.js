@@ -161,7 +161,7 @@ var ApiController = function () {
 			method: this.methods.post,
 			url: this.baseUri + this.routes.games + "/" + id + "/moves?api_key=" + this.apiKey,
 			params: move
-		}).then(function (e) { }, function (error) { });
+		}).then(r => { return r }, e => console.log(e));
 	};
 
 	this.setApiKey = function (apiKey) {

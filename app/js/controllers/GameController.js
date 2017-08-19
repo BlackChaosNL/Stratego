@@ -1,7 +1,18 @@
 var GameController = function () {
-	var api, ac, lakes = [[4, 2], [4, 3], [5, 2], [5, 3], [4, 6], [4, 7], [5, 6], [5, 7]];
-
+	let api;
+	let ac;
 	let placementSelected = -1;
+	const lakes = [
+		[4, 2],
+		[4, 3],
+		[5, 2],
+		[5, 3],
+		[4, 6],
+		[4, 7],
+		[5, 6],
+		[5, 7]
+	];
+
 	let pieces = [
 		{ code: "F", name: "Vlag", count: 1 },
 		{ code: "S", name: "Spion", count: 1 },
@@ -172,6 +183,13 @@ var GameController = function () {
 					tile.data("unit", col);
 				}
 
+				for (let i in lakes) {
+					if (lakes[i][0] == y && lakes[i][1] == x) {
+						tile.addClass("has-lake");
+						break;
+					}
+				}
+
 				// Bind a function to each tile
 				$(document).on("click", that.getTileString(y, x), function (e) {
 					// Allow selecting a unit
@@ -194,26 +212,16 @@ var GameController = function () {
 
 					// Allow the player to select a tile to move to
 					if (selected.state && (col == " " || col == "O")) {
-					    const move = that.isMoveValid(selected.y, selected.x, y, x);
-						if (!move.ok) {
+						const move = that.moveTile(selected.y, selected.x, y, x);
+
+						if (!move) {
 							console.warn("That move is invalid");
 
 							return;
 						}
 
-						const origin = that.getTile(selected.y, selected.x);
-
-						// Move the tile
-						tile.addClass("has-unit");
-						tile.addClass("has-" + origin.data("unit"));
-						tile.data("unit", origin.data("unit"));
-						origin.removeClass("has-unit");
-						origin.removeClass("has-" + origin.data("unit"));
-						origin.data("unit", null);
-
 						// Tell the API something changed
 						api.postGameMoves(message.id, {
-							type: move.type,
 							square: {
 								row: selected.y,
 								column: selected.x
@@ -222,6 +230,9 @@ var GameController = function () {
 								row: y,
 								column: x
 							}
+						}).then(post => {
+							console.log(post)
+							// TODO: Reload page
 						});
 					}
 				});
@@ -279,10 +290,6 @@ var GameController = function () {
 	this.calcDiff = function (i, j) {
 		const d = i - j;
 
-		if (d < 0) {
-			return -d;
-		}
-
 		return d;
 	}
 
@@ -294,25 +301,97 @@ var GameController = function () {
 		return "#col-" + row + "-" + col;
 	}
 
-	this.isMoveValid = function (fromRow, fromCol, toRow, toCol) {
+	this.moveTile = function (fromRow, fromCol, toRow, toCol) {
 		const from = this.getTile(fromRow, fromCol);
 		const to = this.getTile(toRow, toCol);
 
-		// Bombs are not allowed to move
+		// B is not allowed to move
 		if (to.data("B")) {
 			console.log("Bombs are not allowed to move");
 			return false;
 		}
 
+		// F is not allowed to move
+		if (to.data("F")) {
+			console.log("The Flag is not allowed to move");
+		}
+
+		const horizontal = this.calcDiff(fromRow, toRow);
+		const vertical = this.calcDiff(fromCol, toCol);
+
+		// Moving is only allowed in straight lines
+		if (horizontal != 0 && vertical != 0) {
+			console.log("Must move in a straight line");
+			return false;
+		}
+
 		// Tile should be in an allowed range
-		if (1 < this.calcDiff(fromRow, toRow) || 1 < this.calcDiff(fromCol, toCol)) {
+		if (1 < horizontal || 1 < vertical) {
+			// 9 is allowed to move any amount of steps
+			if (from.data("unit") == "9") {
+				const axis = (horizontal == 0) ? "y" : "x";
+
+				// But not across the ocean or over their dead bodies
+				if (this.isValidPath(axis, fromRow, fromCol, toRow, toCol)) {
+					console.log("Path is not clear");
+					return false;
+				}
+
+				return true;
+			}
+
 			console.log("Tile is not in range");
 			return false;
 		}
 
-		return {
-		    ok: true,
-		    type: (to.data("unit") == "O") ? "attack" : "move"
-		};
+		// Move
+		return true;
 	}
+
+	this.isValidPath = (axis, fromRow, fromCol, toRow, toCol) => {
+		if (axis == "x") {
+			let distance = fromCol - toCol;
+			let i = 1;
+
+			if (distance < 0) { distance = -distance; }
+
+			while (i < distance) {
+				const tile = this.getTile(fromRow, (fromCol + i));
+
+				// Check for water tiles
+				if (tile.hasClass("has-lake")) {
+					return false;
+				}
+
+				// Check for enemies along the way
+				if (tile.hasClass("has-unit")) {
+					return false;
+				}
+
+				i++;
+			}
+		}
+
+		let distance = fromRow - toRow;
+		let i = 1;
+		if (distance < 0) { distance = -distance; }
+
+		while (i < distance) {
+			const tile = this.getTile((fromRow + i), fromCol);
+
+			// Check for water tiles
+			if (tile.hasClass("has-lake")) {
+				return false;
+			}
+
+			// Check for enemies along the way
+			if (tile.hasClass("has-unit")) {
+				return false;
+			}
+
+			i++;
+		}
+
+		return true;
+	};
 };

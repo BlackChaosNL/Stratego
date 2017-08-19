@@ -50,6 +50,9 @@ nav .brand-logo {
 			}
 		}
 
+		tbody > tr > td.has-lake {
+			background-color: blue;
+		}
 		tbody > tr > td.has-unit {
 			background-color: inherit;
 			background-repeat: no-repeat;
