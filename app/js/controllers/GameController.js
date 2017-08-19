@@ -106,8 +106,7 @@ var GameController = function () {
 			for (let x = 0; x < 10; x++) {
 				console.log("Binding to  #col-" + x + "-" + y);
 
-				// FIXME: This doesn't seem to trigger
-				$(document).on("click", "#col-" + x + "-" + y, function (e) {
+				$(document).on("click", "#col-" + y + "-" + x, function (e) {
 					console.log("Clicked on " + x + "," + y);
 					if (placementSelected < 0) {
 						console.log("No piece selected for placement");
