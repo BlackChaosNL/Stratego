@@ -3,6 +3,7 @@ var gulp = require('gulp'),
 	sass = require('gulp-sass'),
 	concat = require('gulp-concat'),
 	html = require('gulp-htmlmin'),
+	img = require('gulp-imagemin'),
 	del = require('del');
 
 gulp.task('js', function () {
@@ -25,13 +26,20 @@ gulp.task('html', function () {
 		.pipe(gulp.dest('./rhel/html/'));
 });
 
+gulp.task('imaging', function () {
+	return gulp.src('./app/img/**/*')
+		.pipe(img())
+		.pipe(gulp.dest('./rhel/img'));
+});
+
 gulp.task('refresh', function () {
 	return del(['./rhel/*']);
 });
 
-gulp.task('default', ['js', 'scss', 'html'], function () {
+gulp.task('default', ['js', 'scss', 'html', 'imaging'], function () {
 	live.listen();
 	gulp.watch('./app/css/*.scss', ['scss']);
 	gulp.watch('./app/js/**/*.js', ['js']);
 	gulp.watch('./app/html/**/*.html', ['html']);
+	gulp.watch('./app/img/**/*', ['imaging']);
 });

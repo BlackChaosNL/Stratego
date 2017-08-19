@@ -33,6 +33,10 @@ nav .brand-logo {
 }
 
 #content {
+	.piece-placement.selected {
+		background-color: blue;
+	}
+
 	#gameBoard {
 		border-spacing: 3px;
 		border-collapse: separate;
@@ -40,7 +44,31 @@ nav .brand-logo {
 			background-color: #ADD8E6;
 			height: 80px;
 			width: 50px;
+
+			.has-unit {
+
+			}
 		}
+
+		tbody > tr > td.has-unit {
+			background-color: inherit;
+			background-repeat: no-repeat;
+			background-size: contain;
+		}
+		tbody > tr > td.has-unit.has-1 { background-image: url(./../img/1.png); }
+		tbody > tr > td.has-unit.has-2 { background-image: url(./../img/2.png); }
+		tbody > tr > td.has-unit.has-3 { background-image: url(./../img/3.png); }
+		tbody > tr > td.has-unit.has-4 { background-image: url(./../img/4.png); }
+		tbody > tr > td.has-unit.has-5 { background-image: url(./../img/5.png); }
+		tbody > tr > td.has-unit.has-6 { background-image: url(./../img/6.png); }
+		tbody > tr > td.has-unit.has-7 { background-image: url(./../img/7.png); }
+		tbody > tr > td.has-unit.has-8 { background-image: url(./../img/8.png); }
+		tbody > tr > td.has-unit.has-9 { background-image: url(./../img/9.png); }
+		tbody > tr > td.has-unit.has-B { background-image: url(./../img/B.png); }
+		tbody > tr > td.has-unit.has-F { background-image: url(./../img/F.png); }
+		tbody > tr > td.has-unit.has-O { background-image: url(./../img/O.png); }
+		tbody > tr > td.has-unit.has-S { background-image: url(./../img/S.png); }
+
 		tbody > tr > td.isDisabled {
 			background-color: #67818a;
 			cursor: not-allowed;

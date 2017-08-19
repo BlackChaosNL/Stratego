@@ -9,8 +9,10 @@
     "gulp-concat": "^2.6.1",
     "gulp-dest": "^0.2.3",
     "gulp-htmlmin": "^3.0.0",
+    "gulp-imagemin": "^3.3.0",
     "gulp-livereload": "^3.8.1",
-    "gulp-sass": "^3.1.0"
+    "gulp-sass": "^3.1.0",
+    "through2-filter": "^2.0.0"
   },
   "devDependencies": {},
   "scripts": {
