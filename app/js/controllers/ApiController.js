@@ -10,7 +10,7 @@ var ApiController = function () {
 		me: "/users/me",
 		games: "/games"
 	};
-	this.io = io.connect(this.baseUri, { query: 'api_key=' + this.apiKey });
+	this.socket;
 
 	this.login = function (apiKey) {
 		_this = this;
@@ -20,6 +20,7 @@ var ApiController = function () {
 		}).then(function (e) {
 			_this.setApiKey(apiKey);
 			localStorage.setItem("avansApiKey", apiKey);
+			_this.socket = io.connect("http://strategoavans.herokuapp.com/", { query: 'api_key=' + _this.apiKey });
 			return {
 				ok: true,
 				message: e

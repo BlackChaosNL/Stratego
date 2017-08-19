@@ -1,7 +1,5 @@
 var GameController = function () {
-	var api, views = {
-		setup: ''
-	}, lakes = [[4, 2], [4, 3], [5, 2], [5, 3], [4, 6], [4, 7], [5, 6], [5, 7]];
+	var api, ac, lakes = [[4, 2], [4, 3], [5, 2], [5, 3], [4, 6], [4, 7], [5, 6], [5, 7]];
 
 	let placementSelected = -1;
 	let pieces = [
@@ -21,6 +19,7 @@ var GameController = function () {
 
 	this.load = function (args) {
 		api = args.apiController;
+		ac = args.applicationController;
 		var _this = this;
 		api.getGameById(args.gameId).then(function (e) {
 			if (!e.ok) {
@@ -138,7 +137,7 @@ var GameController = function () {
 				});
 
 				// Enable this column
-				this.changeBoardState({enable: [{x: x, y: y}]});
+				this.changeBoardState({ enable: [{ x: x, y: y }] });
 			}
 		}
 	};
