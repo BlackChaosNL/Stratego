@@ -39,22 +39,7 @@ var GameController = function () {
 				$('div.message').html('We haven\'t found a player yet, please be patient!').addClass("isInfo");
 				break;
 			case 'waiting_for_pieces':
-<<<<<<< HEAD
 				this.fillGameBoard(e.message.id);
-=======
-				var playerPlacement = [];
-				for (var i = 6; i < 10; i++) {
-					for (var n = 0; n < 10; n++) {
-						playerPlacement.push([i, n]);
-					}
-				}
-				$("#gameBoard > tbody > tr > td").click(function (a) {
-					console.log(a);
-				});
-				_this.changeBoardState({
-					enable: playerPlacement
-				});
->>>>>>> development
 				break;
 			case 'waiting_for_opponent_pieces':
 
