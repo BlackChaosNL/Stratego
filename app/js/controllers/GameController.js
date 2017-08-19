@@ -104,18 +104,15 @@ var GameController = function () {
 		// Bind placement function to the columns
 		for (let y = 6; y < 10; y++) {
 			for (let x = 0; x < 10; x++) {
-				console.log("Binding to  #col-" + x + "-" + y);
-
 				$(document).on("click", "#col-" + y + "-" + x, function (e) {
-					console.log("Clicked on " + x + "," + y);
 					if (placementSelected < 0) {
-						console.log("No piece selected for placement");
+						console.warn("No piece selected for placement");
 						return;
 					}
 
 					// Make sure a piece can be placed here
 					if ($(this).hasClass("has-unit")) {
-						console.log("Column already contains a piece");
+						console.warn("Column already contains a piece");
 						return
 					}
 
@@ -137,7 +134,6 @@ var GameController = function () {
 
 					// When no pieces are left, post the board
 					if (--piecesTotal < 1) {
-						console.log("Posting board to API");
 						api.postBoard(gameId, board);
 
 						// TODO: Reload page to go to the next step?
