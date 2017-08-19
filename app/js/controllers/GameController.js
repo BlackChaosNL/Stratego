@@ -110,11 +110,19 @@ var GameController = function () {
 				$(document).on("click", "#col-" + x + "-" + y, function (e) {
 					console.log("Clicked on " + x + "," + y);
 					if (placementSelected < 0) {
+						console.log("No piece selected for placement");
 						return;
 					}
 
-					// Add the css class to the column
-					console.log("Placing " + pieces[placementSelected].name);
+					// Make sure a piece can be placed here
+					if ($(this).hasClass("has-unit")) {
+						console.log("Column already contains a piece");
+						return
+					}
+
+					// Add the classes to the column
+					$(this).addClass("has-unit");
+					$(this).addClass("has-" + pieces[placementSelected].code);
 
 					// Add to the board array to send
 					board[y - 6][x] = pieces[placementSelected].code
