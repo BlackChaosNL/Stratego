@@ -82,7 +82,13 @@ var GameController = function () {
 		$("#gameBoard").before(buttonDOM);
 
 		// Add function to the buttons
+		let piecesTotal = 0;
+		let board = [[], [], [], []];
+
 		for (let i in pieces) {
+			// Count the total amount of pieces while we're looping through them anyway
+			piecesTotal += pieces[i].count;
+
 			$("#place-" + pieces[i].code).on("click", function (e) {
 				// Remove highlight from old selection
 				if (-1 < placementSelected) {
@@ -98,39 +104,42 @@ var GameController = function () {
 		// Bind placement function to the columns
 		for (let y = 6; y < 10; y++) {
 			for (let x = 0; x < 10; x++) {
-				$("#col-" + x + "-" + y).on("click", function (e) {
+				console.log("Binding to  #col-" + x + "-" + y);
+
+				// FIXME: This doesn't seem to trigger
+				$(document).on("click", "#col-" + x + "-" + y, function (e) {
+					console.log("Clicked on " + x + "," + y);
 					if (placementSelected < 0) {
 						return;
 					}
 
-					console.log("Placing " + pieces[placementSelected].name + " on " + x + "," + y);
+					// Add the css class to the column
+					console.log("Placing " + pieces[placementSelected].name);
+
+					// Add to the board array to send
+					board[y - 6][x] = pieces[placementSelected].code
+
+					// Disable placing this piece if the max has been reached
+					if (--pieces[placementSelected].count < 1) {
+						const btn = $("#place-" + pieces[placementSelected].code);
+
+						btn.removeClass("selected");
+						btn.attr("disabled", true);
+						placementSelected = -1;
+					}
+
+					// When no pieces are left, post the board
+					if (--piecesTotal < 1) {
+						api.postBoard(gameId, board);
+
+						// TODO: Reload page to go to the next step?
+					}
 				});
+
+				// Enable this column
+				this.changeBoardState({enable: [{x: x, y: y}]});
 			}
 		}
-
-		// Unlock our side of the board
-		let enableState = [];
-
-		for (let y = 6; y < 10; y++) {
-			for (let x = 0; x < 10; x++) {
-				enableState.push({x: x, y: y});
-			}
-		}
-
-		this.changeBoardState({
-			enable: enableState
-		});
-
-		// Create our empty 4 rows
-		var board = [
-			[],
-			[],
-			[],
-			[]
-		];
-
-		// Send the board to the API
-		//api.postBoard(gameId, board);
 	};
 
 	this.makeMove = function () {
