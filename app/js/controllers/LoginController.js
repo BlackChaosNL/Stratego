@@ -14,6 +14,15 @@ var LoginController = function () {
 
 	this.setBindings = function () {
 		this._this = this;
+		if (localStorage.getItem("avansApiKey")) {
+			_this.api.login(localStorage.getItem("avansApiKey")).then(function (e) {
+				_this.sw.switchController({
+					selectedController: 'GameListController',
+					apiController: _this.api,
+					applicationController: _this.sw
+				});
+			});
+		}
 		$("button#login").click(function (event) {
 			event.stopPropagation();
 			_this.api.login($("#apiKey").val()).then(function (e) {
