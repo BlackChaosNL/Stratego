@@ -45,10 +45,7 @@ var GameController = function () {
 
 				break;
 			case 'my_turn':
-				_this.changeBoardState({
-					enable: "all",
-					disable: lakes
-				});
+		    this.makeMove(e);
 				break;
 			case 'opponent_turn':
 				_this.changeBoardState({
@@ -146,8 +143,21 @@ var GameController = function () {
 		}
 	};
 
-	this.makeMove = function () {
-		// TODO: Make movable & sendable.
+	this.makeMove = function (e) {
+		// Enable the tiles which are usable
+		_this.changeBoardState({
+			enable: "all",
+			disable: lakes
+		});
+
+		// Add all units as given by the API
+	    console.log(e)
+
+		// Allow the player to select a unit
+
+		// Allow the player to select a tile to move towards
+
+		// Tell the API something changed
 	};
 
 	this.drawGameBoard = function () {
