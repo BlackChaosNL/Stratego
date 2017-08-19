@@ -33,6 +33,12 @@ nav .brand-logo {
 }
 
 #content {
+	.piece-placement {
+		.selected {
+			background-color: blue;
+		}
+	}
+
 	#gameBoard {
 		border-spacing: 3px;
 		border-collapse: separate;

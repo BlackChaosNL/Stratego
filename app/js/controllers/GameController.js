@@ -3,6 +3,22 @@ var GameController = function () {
 
 	}, lakes = [[4, 2], [4, 3], [5, 2], [5, 3], [4, 6], [4, 7], [5, 6], [5, 7]];
 
+	let placementSelected = -1;
+	let pieces = [
+		{ code: "F", name: "Vlag", count: 1 },
+		{ code: "S", name: "Spion", count: 1 },
+		{ code: "9", name: "Verkenner", count: 8 },
+		{ code: "8", name: "Mineur", count: 5 },
+		{ code: "7", name: "Sergeant", count: 4 },
+		{ code: "6", name: "Luitenant", count: 4 },
+		{ code: "5", name: "Kapitein", count: 4 },
+		{ code: "4", name: "Majoor", count: 3 },
+		{ code: "3", name: "Kolonel", count: 2 },
+		{ code: "2", name: "Generaal", count: 1 },
+		{ code: "1", name: "Maarschalk", count: 1 },
+		{ code: "B", name: "Bom", count: 6 }
+	];
+
 	this.load = function (args) {
 		api = args.apiController;
 		var _this = this;
@@ -54,22 +70,43 @@ var GameController = function () {
 	// 4 rows of 10 columns.
 	//
 	this.fillGameBoard = function (gameId) {
-		// These pieces need to be placed, with their count
-		var pieces = [
-			{ code: "F", name: "Vlag", count: 1 },
-			{ code: "S", name: "Spion", count: 1 },
-			{ code: "9", name: "Verkenner", count: 8 },
-			{ code: "8", name: "Mineur", count: 5 },
-			{ code: "7", name: "Sergeant", count: 4 },
-			{ code: "6", name: "Luitenant", count: 4 },
-			{ code: "5", name: "Kapitein", count: 4 },
-			{ code: "4", name: "Majoor", count: 3 },
-			{ code: "3", name: "Kolonel", count: 2 },
-			{ code: "2", name: "Generaal", count: 1 },
-			{ code: "1", name: "Maarschalk", count: 1 },
-			{ code: "B", name: "Bom", count: 6 }
-		];
+		// Show buttons to let the player place the pieces
+		let buttonDOM = "<div>";
 
+		for (let i in pieces) {
+			buttonDOM += "<button id='place-" + pieces[i].code + "' class='piece-placement'>" + pieces[i].name + "</button>";
+		}
+
+		buttonDOM += "</div>";
+
+		$("#gameBoard").before(buttonDOM);
+
+		// Add function to the buttons
+		for (let i in pieces) {
+			$("#place-" + pieces[i].code).on("click", function (e) {
+				// Remove highlight from old selection
+				if (-1 < placementSelected) {
+					$("#place-" + pieces[placementSelected].code).removeClass("selected");
+				}
+
+				// Highlight new selection
+				placementSelected = i;
+				$(this).addClass("selected");
+			});
+		}
+
+		// Bind placement function to the columns
+		for (let y = 6; y < 10; y++) {
+			for (let x = 0; x < 10; x++) {
+				$("#col-" + x + "-" + y).on("click", function (e) {
+					if (placementSelected < 0) {
+						return;
+					}
+
+					console.log("Placing " + pieces[placementSelected].name + " on " + x + "," + y);
+				});
+			}
+		}
 
 		// Unlock our side of the board
 		let enableState = [];
@@ -84,23 +121,12 @@ var GameController = function () {
 			enable: enableState
 		});
 
-		// Place each piece one by one
-		for (var i in pieces) {
-			piece = pieces[i];
-
-			while (piece.count > 0) {
-				console.log("Need to place " + piece.count + " pieces more of type " + piece.name);
-
-				piece.count--;
-			}
-		}
-
-		// Create 4 rows of the board which we need to fill
+		// Create our empty 4 rows
 		var board = [
-			['7', 'B', '5', '2', '9', '9', '1', '8', '9', 'B'],
-			['B', '7', '9', 'S', '4', '5', '8', '5', '3', '9'],
-			['7', 'B', '4', '8', '6', '4', '3', '8', '7', '6'],
-			['B', 'F', 'B', '5', '9', '6', '6', '9', '9', '8']
+			[],
+			[],
+			[],
+			[]
 		];
 
 		// Send the board to the API
@@ -147,7 +173,6 @@ var GameController = function () {
 
 		if (Array.isArray(state.enable)) {
 			state.enable.forEach(function (item) {
-				console.log("Enabling " + item.y + "," + item.x);
 				$('#col-' + item.y + '-' + item.x).removeClass('isDisabled');
 			});
 		}
