@@ -146,7 +146,7 @@ const GameController = function() {
 				}
 			}).then(post => {
 				if (post.state == "game_over") {
-					$("#gameBoard").load("view.victory/view.lost");
+					// TODO: Move on to the post-game screen
 
 					return;
 				}
@@ -392,7 +392,6 @@ const GameController = function() {
 						api.postBoard(gameId, board);
 
 						// TODO: Reload page to go to the next step?
-						$("#gameBoard").load("view.lost"); // FIXME: Or view.victory
 					}
 				});
 
