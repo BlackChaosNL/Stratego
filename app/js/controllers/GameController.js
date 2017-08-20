@@ -41,6 +41,13 @@ var GameController = function () {
 			_this.drawGameBoard();
 			_this.setGameState(e, _this);
 		});
+
+		api.socket.on('move', function (i) {
+			api.getGameById(i.game_id).then(function (e) {
+				_this.drawGameBoard();
+				_this.setGameState(e, _this);
+			});
+		});
 	};
 
 	this.setGameState = function (e, _this) {
@@ -62,7 +69,7 @@ var GameController = function () {
 				});
 				break;
 			case 'game_over':
-
+				// TODO: Make traversable board
 				break;
 			default:
 				console.log('This has not been implemented yet or the API has changed, please contact the developer.');
@@ -215,7 +222,6 @@ var GameController = function () {
 
 						if (!move) {
 							console.warn("That move is invalid");
-
 							return;
 						}
 
@@ -230,6 +236,7 @@ var GameController = function () {
 								column: x
 							}
 						}).then(post => {
+
 							console.log(post)
 							// TODO: Reload page
 						});
