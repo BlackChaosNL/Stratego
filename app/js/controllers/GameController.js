@@ -2,6 +2,7 @@ const GameController = function() {
 	let api;
 	let ac;
 	let placementSelected = -1;
+	let selection = { };
 	const lakes = [
 		[4, 2],
 		[4, 3],
@@ -91,6 +92,67 @@ const GameController = function() {
 		}
 	};
 
+	this.doBindPlayFunction = (gameId, row, col) => {
+		const that = this;
+		const tile = this.getTile(row, col);
+		const data = tile.data("unit");
+
+		// Allow selecting a unit
+		if (data != null && data != " " && data != "O") {
+			// Deselect a previously selected unit
+			if (selection.state) {
+				this.getTile(selection.y, selection.x).removeClass("selected");
+			}
+
+			selection = {
+				state: true,
+				x: col,
+				y: row
+			};
+
+			tile.addClass("selected");
+
+			return;
+		}
+
+		// Allow the player to select a tile to move to
+		if (selection.state && (data == null || data == " " || data == "O")) {
+			const valid = this.isValidMove(selection.y, selection.x, row, col);
+
+			if (!valid) {
+				console.warn("That move is invalid");
+				return;
+			}
+
+			// Lock the board
+			this.setBoardState({disable: "all"});
+
+			// Tell the API something changed
+			api.postGameMoves(gameId, {
+				square: {
+					row: selection.y,
+					column: selection.x
+				},
+				square_to: {
+					row: row,
+					column: col
+				}
+			}).then(post => {
+				// Remove selection
+				$(that.getTile(selection.y, selection.x)).removeClass("selected");
+
+				// Process API response
+				this.doDrawTiles(post.game.board);
+
+				// Unlock the board
+				this.setBoardState({
+					enable: "all",
+					disable: lakes
+				});
+			}).catch(e => console.error(e));
+		}
+	};
+
 	this.doDrawBoardHtml = () => {
 		const GameBoard = $('table#gameBoard > tbody');
 
@@ -172,7 +234,9 @@ const GameController = function() {
 	this.handleMyTurn = message => {
 		const that = this;
 		const board = message.board;
-		let selected = {
+
+		// Set default selection value
+		selection = {
 			state: false,
 			x: 0,
 			y: 0
@@ -193,59 +257,7 @@ const GameController = function() {
 				const col = board[y][x];
 				const tile = that.getTile(y, x);
 
-				$(document).on("click", that.getTileString(y, x), e => {
-					// Allow selecting a unit
-					if (col != " " && col != "O") {
-						// Deselect a previously selected unit
-						if (selected.state) {
-							that.getTile(selected.y, selected.x).removeClass("selected");
-						}
-
-						selected = {
-							state: true,
-							x: x,
-							y: y
-						};
-
-						tile.addClass("selected");
-
-						return;
-					}
-
-					// Allow the player to select a tile to move to
-					if (selected.state && (col == " " || col == "O")) {
-						const valid = that.isValidMove(selected.y, selected.x, y, x);
-
-						if (!valid) {
-							console.warn("That move is invalid");
-							return;
-						}
-
-						// Lock the board
-						that.setBoardState({disable: "all"});
-
-						// Tell the API something changed
-						api.postGameMoves(message.id, {
-							square: {
-								row: selected.y,
-								column: selected.x
-							},
-							square_to: {
-								row: y,
-								column: x
-							}
-						}).then(post => {
-							// Process API response
-							that.doDrawTiles(post.game.board);
-
-							// Unlock the board
-							that.setBoardState({
-								enable: "all",
-								disable: lakes
-							});
-						}).catch(e => console.error(e));
-					}
-				});
+				$(document).on("click", that.getTileString(y, x), () => that.doBindPlayFunction(message.id, y, x));
 			}
 		}
 	};
