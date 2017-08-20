@@ -382,6 +382,7 @@ const GameController = function() {
 						api.postBoard(gameId, board);
 
 						// TODO: Reload page to go to the next step?
+						$("#gameBoard").load("view.lost"); // FIXME: Or view.victory
 					}
 				});
 
