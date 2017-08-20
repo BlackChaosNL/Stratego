@@ -162,7 +162,16 @@ const GameController = function() {
 					enable: "all",
 					disable: lakes
 				});
-			}).catch(e => console.error(e));
+			}).catch(e => {
+				console.error(e);
+
+				// At least don't bother the user too much
+				$(that.getTile(selection.y, selection.x)).removeClass("selected");
+				this.setBoardState({
+					enable: "all",
+					disable: lakes
+				});
+			});
 		}
 	};
 
