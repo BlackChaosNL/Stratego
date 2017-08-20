@@ -35,6 +35,8 @@ const GameController = function() {
 		return d;
 	};
 
+	this.calcDeltaFromDiff = i => i < 0 ? -i : i;
+
 	this.getTile = (row, col) => {
 		return $(this.getTileString(row, col));
 	};
@@ -124,9 +126,7 @@ const GameController = function() {
 
 		// Allow the player to select a tile to move to
 		if (selection.state && (data == null || data == " " || data == "O")) {
-			const valid = this.isValidMove(selection.y, selection.x, row, col);
-
-			if (!valid) {
+			if (!this.isValidMove(selection.y, selection.x, row, col)) {
 				console.warn("That move is invalid");
 				return;
 			}
@@ -428,14 +428,17 @@ const GameController = function() {
 			return false;
 		}
 
+		const horizontalDelta = this.calcDeltaFromDiff(horizontal);
+		const verticalDelta = this.calcDeltaFromDiff(vertical);
+
 		// Tile should be in an allowed range
-		if (1 < horizontal || 1 < vertical) {
+		if (1 < horizontalDelta || 1 < verticalDelta) {
 			// 9 is allowed to move any amount of steps
 			if (from.data("unit") == "9") {
-				const axis = (horizontal == 0) ? "y" : "x";
+				const axis = (horizontal == 0) ? "x" : "y";
 
 				// But not across the ocean or over their dead bodies
-				if (this.isValidPath(axis, fromRow, fromCol, toRow, toCol)) {
+				if (!this.isValidPath(axis, fromRow, fromCol, toRow, toCol)) {
 					console.log("Path is not clear");
 					return false;
 				}
@@ -463,11 +466,13 @@ const GameController = function() {
 
 				// Check for water tiles
 				if (tile.hasClass("has-lake")) {
+					console.log("Path has lake");
 					return false;
 				}
 
 				// Check for enemies along the way
 				if (tile.hasClass("has-unit")) {
+					console.log("Path has unit");
 					return false;
 				}
 
@@ -480,15 +485,17 @@ const GameController = function() {
 		if (distance < 0) { distance = -distance; }
 
 		while (i < distance) {
-			const tile = this.getTile((fromRow + i), fromCol);
+			const tile = this.getTile((fromRow + i - distance), fromCol);
 
 			// Check for water tiles
 			if (tile.hasClass("has-lake")) {
+				console.log("Path has lake");
 				return false;
 			}
 
 			// Check for enemies along the way
 			if (tile.hasClass("has-unit")) {
+				console.log("Path has unit");
 				return false;
 			}
 
