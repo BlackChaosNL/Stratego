@@ -138,6 +138,11 @@ const GameController = function() {
 					column: col
 				}
 			}).then(post => {
+				if (post.state == "game_over") {
+					// TODO: Just go to the game_over state
+					return;
+				}
+
 				// Remove selection
 				$(that.getTile(selection.y, selection.x)).removeClass("selected");
 
