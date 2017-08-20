@@ -78,6 +78,13 @@ const GameController = function() {
 	};
 
 	this.setGameState = (e, _this) => {
+		// Remove state-specific elements
+		if ($("#placebar").length) { $("#placebar").remove(); }
+
+		// Clear the message div
+		$("#content .message").html("");
+
+		// Switch to the correct handler
 		switch (e.message.state) {
 			case 'waiting_for_an_opponent': this.handleWaitingForOpponent(); break;
 			case 'waiting_for_pieces': this.handleWaitingForPieces(e.message.id); break;
@@ -139,7 +146,8 @@ const GameController = function() {
 				}
 			}).then(post => {
 				if (post.state == "game_over") {
-					// TODO: Just go to the game_over state
+					$("#gameBoard").load("view.victory/view.lost");
+
 					return;
 				}
 
@@ -227,13 +235,19 @@ const GameController = function() {
 
 			$('.nav-wrapper').html('Game VS ' + e.message.opponent + ' (' + e.message.id + ')');
 
-			that.doDrawBoardHtml();
 			that.setGameState(e, that);
 		});
 	};
 
 	this.handleGameOver = () => {
-		console.log("NYI");
+		// Clear the board HTML
+		$('table#gameBoard > tbody').html("");
+
+		// Clear the placebar if needed
+		$("#placebar").remove();
+
+		// Show message for the victor
+		$("#content .message").html("<p>This game is over!</p>");
 	};
 
 	this.handleMyTurn = message => {
@@ -246,6 +260,12 @@ const GameController = function() {
 			x: 0,
 			y: 0
 		};
+
+		// Draw the board HTML
+		this.doDrawBoardHtml();
+
+		// Clear the placebar if needed
+		$("#placebar").remove();
 
 		// Enable the tiles which are usable
 		this.setBoardState({
@@ -268,6 +288,9 @@ const GameController = function() {
 	};
 
 	this.handleOpponentTurn = () => {
+		// Draw the board HTML
+		this.doDrawBoardHtml();
+
 		console.log("NYI");
 	};
 
@@ -276,6 +299,9 @@ const GameController = function() {
 	};
 
 	this.handleWaitingForOpponentPieces = () => {
+		// Draw the board HTML
+		this.doDrawBoardHtml();
+
 		console.log("NYI");
 	};
 
@@ -284,16 +310,21 @@ const GameController = function() {
 	// 4 rows of 10 columns.
 	//
 	this.handleWaitingForPieces = gameId => {
+		// Draw the board HTML
+		this.doDrawBoardHtml();
+
 		// Show buttons to let the player place the pieces
-		let buttonDOM = "<div>";
+		if (!$("placebar").length) {
+			let buttonDOM = "<div id='placebar'>";
 
-		for (let i in pieces) {
-			buttonDOM += "<button id='place-" + pieces[i].code + "' class='piece-placement'>" + pieces[i].name + "</button>";
+			for (let i in pieces) {
+				buttonDOM += "<button id='place-" + pieces[i].code + "' class='piece-placement'>" + pieces[i].name + "</button>";
+			}
+
+			buttonDOM += "</div>";
+
+			$("#gameBoard").before(buttonDOM);
 		}
-
-		buttonDOM += "</div>";
-
-		$("#gameBoard").before(buttonDOM);
 
 		// Add function to the buttons
 		let piecesTotal = 0;
