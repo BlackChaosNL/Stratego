@@ -52,7 +52,6 @@ var GameController = function () {
 				this.fillGameBoard(e.message.id);
 				break;
 			case 'waiting_for_opponent_pieces':
-
 				break;
 			case 'my_turn':
 				this.makeMove(e.message);
@@ -305,16 +304,18 @@ var GameController = function () {
 		const from = this.getTile(fromRow, fromCol);
 		const to = this.getTile(toRow, toCol);
 
-		// B is not allowed to move
-		if (to.data("B")) {
-			console.log("Bombs are not allowed to move");
+		// B & F are not allowed to move
+		if (to.data("B") || to.data("F")) {
+			console.log("Bombs and the flag are not allowed to move");
 			return false;
 		}
 
-		// F is not allowed to move
-		if (to.data("F")) {
-			console.log("The Flag is not allowed to move");
-		}
+		lakes.forEach(function (lake) {
+			if (lake[0] == toRow && lake[1] == toCol) {
+				console.warn("You are not allowed to put a piece on water!");
+				return false;
+			}
+		});
 
 		const horizontal = this.calcDiff(fromRow, toRow);
 		const vertical = this.calcDiff(fromCol, toCol);
