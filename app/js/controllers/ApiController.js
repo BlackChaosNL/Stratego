@@ -33,6 +33,11 @@ var ApiController = function () {
 		});
 	};
 
+	this.logout = function () {
+		localStorage.removeItem("avansApiKey");
+		apiKey = "";
+	};
+
 	this.createGame = function (aiBoolean = true) {
 		return xhrRequest({
 			method: this.methods.post,
