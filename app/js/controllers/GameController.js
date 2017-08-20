@@ -125,7 +125,6 @@ const GameController = function() {
 		// Allow the player to select a tile to move to
 		if (selection.state && (data == null || data == " " || data == "O")) {
 			const valid = this.isValidMove(selection.y, selection.x, row, col);
-			console.log(valid);
 
 			if (!valid) {
 				console.warn("That move is invalid");
@@ -154,6 +153,7 @@ const GameController = function() {
 
 				// Remove selection
 				$(that.getTile(selection.y, selection.x)).removeClass("selected");
+				selection.state = false;
 
 				// Process API response
 				this.doDrawTiles(post.game.board);
