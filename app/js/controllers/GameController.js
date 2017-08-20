@@ -1,4 +1,4 @@
-var GameController = function () {
+var GameController = () => {
 	let api;
 	let ac;
 	let placementSelected = -1;
@@ -28,49 +28,28 @@ var GameController = function () {
 		{ code: "B", name: "Bom", count: 6 }
 	];
 
-	this.load = function (args) {
-		api = args.apiController;
-		ac = args.applicationController;
-		var _this = this;
-		api.getGameById(args.gameId).then(function (e) {
-			if (!e.ok) {
-				$("div.message").html(e.message.response.message).addClass("isError");
-				return;
-			}
-			$('.nav-wrapper').html('Game VS ' + e.message.opponent + ' (' + e.message.id + ')');
-			_this.drawGameBoard();
-			_this.setGameState(e, _this);
-		});
+	this.calcDiff = (i, j) => {
+		const d = i - j;
 
-		api.socket.on('move', function (i) {
-			api.getGameById(i.game_id).then(function (e) {
-				_this.drawGameBoard();
-				_this.setGameState(e, _this);
-			});
-		});
+		return d;
 	};
 
-	this.setGameState = function (e, _this) {
+	this.getTile = (row, col) => {
+		return $(this.getTileString(row, col));
+	};
+
+	this.getTileString = (row, col) => {
+		return "#col-" + row + "-" + col;
+	};
+
+	this.setGameState = (e, _this) => {
 		switch (e.message.state) {
-			case 'waiting_for_an_opponent':
-				$('div.message').html('We haven\'t found a player yet, please be patient!').addClass("isInfo");
-				break;
-			case 'waiting_for_pieces':
-				this.fillGameBoard(e.message.id);
-				break;
-			case 'waiting_for_opponent_pieces':
-				break;
-			case 'my_turn':
-				this.makeMove(e.message);
-				break;
-			case 'opponent_turn':
-				_this.changeBoardState({
-					disable: "all"
-				});
-				break;
-			case 'game_over':
-				// TODO: Make traversable board
-				break;
+			case 'waiting_for_an_opponent': this.handleWaitingForOpponent(); break;
+			case 'waiting_for_pieces': this.handleWaitingForPieces(e.message.id); break;
+			case 'waiting_for_opponent_pieces': this.handleWaitingForOpponentPieces(); break;
+			case 'my_turn': this.handleMyTurn(e.message); break;
+			case 'opponent_turn': this.handleOpponentTurn(); break;
+			case 'game_over': this.handleGameOver(); break;
 			default:
 				console.log('This has not been implemented yet or the API has changed, please contact the developer.');
 				console.log('Use the following message: ' + e.message.state);
@@ -78,88 +57,78 @@ var GameController = function () {
 		}
 	};
 
-	//
-	// Only need to fill our side of the board, which consists of
-	// 4 rows of 10 columns.
-	//
-	this.fillGameBoard = function (gameId) {
-		// Show buttons to let the player place the pieces
-		let buttonDOM = "<div>";
+	this.doBindFunctionToTiles = (event, func) => {
+	};
 
-		for (let i in pieces) {
-			buttonDOM += "<button id='place-" + pieces[i].code + "' class='piece-placement'>" + pieces[i].name + "</button>";
-		}
+	this.doDrawBoardHtml = () => {
+		const GameBoard = $('table#gameBoard > tbody');
 
-		buttonDOM += "</div>";
+		GameBoard.html("");
 
-		$("#gameBoard").before(buttonDOM);
+		for (let i = 0; i < 10; i++) {
+			GameBoard.append('<tr id="row-' + i + '">');
 
-		// Add function to the buttons
-		let piecesTotal = 0;
-		let board = [[], [], [], []];
+			let row = $('tr#row-' + i);
 
-		for (let i in pieces) {
-			// Count the total amount of pieces while we're looping through them anyway
-			piecesTotal += pieces[i].count;
+			for (let n = 0; n < 10; n++) {
+				row.append('<td id="col-' + i + '-' + n + '" class="isDisabled"></td>');
+			}
 
-			$("#place-" + pieces[i].code).on("click", function (e) {
-				// Remove highlight from old selection
-				if (-1 < placementSelected) {
-					$("#place-" + pieces[placementSelected].code).removeClass("selected");
+			row.append('</tr>');
+		};
+	};
+
+	this.doDrawTiles = board => {
+		for (let y = 0; y < board.length; y++) {
+			const row = board[y];
+
+			for (let x = 0; x < row.length; x++) {
+				const tile = that.getTile(y, x);
+				const col = row[x];
+
+				// Draw the units
+				if (col != " ") {
+					tile.addClass("has-unit");
+					tile.addClass("has-" + col);
+					tile.data("unit", col);
 				}
 
-				// Highlight new selection
-				placementSelected = i;
-				$(this).addClass("selected");
-			});
-		}
+				for (let i in lakes) {
+					if (lakes[i][0] == y && lakes[i][1] == x) {
+						tile.addClass("has-lake");
 
-		// Bind placement function to the columns
-		for (let y = 6; y < 10; y++) {
-			for (let x = 0; x < 10; x++) {
-				$(document).on("click", "#col-" + y + "-" + x, function (e) {
-					if (placementSelected < 0) {
-						console.warn("No piece selected for placement");
-						return;
+						break;
 					}
-
-					// Make sure a piece can be placed here
-					if ($(this).hasClass("has-unit")) {
-						console.warn("Column already contains a piece");
-						return
-					}
-
-					// Add the classes to the column
-					$(this).addClass("has-unit");
-					$(this).addClass("has-" + pieces[placementSelected].code);
-
-					// Add to the board array to send
-					board[y - 6][x] = pieces[placementSelected].code
-
-					// Disable placing this piece if the max has been reached
-					if (--pieces[placementSelected].count < 1) {
-						const btn = $("#place-" + pieces[placementSelected].code);
-
-						btn.removeClass("selected");
-						btn.attr("disabled", true);
-						placementSelected = -1;
-					}
-
-					// When no pieces are left, post the board
-					if (--piecesTotal < 1) {
-						api.postBoard(gameId, board);
-
-						// TODO: Reload page to go to the next step?
-					}
-				});
-
-				// Enable this column
-				this.changeBoardState({ enable: [{ x: x, y: y }] });
+				}
 			}
 		}
 	};
 
-	this.makeMove = function (message) {
+	this.load = args => {
+		api = args.apiController;
+		ac = args.applicationController;
+
+		const that = this;
+
+		api.getGameById(args.gameId).then(e => {
+			if (!e.ok) {
+				$("div.message").html(e.message.response.message).addClass("isError");
+
+				return;
+			}
+
+			$('.nav-wrapper').html('Game VS ' + e.message.opponent + ' (' + e.message.id + ')');
+
+			that.doDrawBoardHtml();
+			that.setGameState(e, that);
+		});
+	};
+
+	this.handleGameOver = () => {
+		console.log("NYI");
+	};
+
+	this.handleMyTurn = message => {
 		const that = this;
 		const board = message.board;
 		let selected = {
@@ -236,9 +205,8 @@ var GameController = function () {
 								column: x
 							}
 						}).then(post => {
-
-							console.log(post)
-							// TODO: Reload page
+							// Process API response
+							console.log(post);
 						});
 					}
 				});
@@ -246,24 +214,104 @@ var GameController = function () {
 		}
 	};
 
-	this.drawGameBoard = function () {
-		var GameBoard = $('table#gameBoard > tbody');
-		GameBoard.html("");
-		for (i = 0; i < 10; i++) {
-			GameBoard.append('<tr id="row-' + i + '">');
-			var row = $('tr#row-' + i);
-			for (n = 0; n < 10; n++) {
-				row.append('<td id="col-' + i + '-' + n + '" class="isDisabled"></td>');
-			};
-			row.append('</tr>');
-		};
+	this.handleOpponentTurn = () => {
+		console.log("NYI");
+	};
+
+	this.handleWaitingForOpponent = () => {
+		$('div.message').html('We haven\'t found a player yet, please be patient!').addClass("isInfo");
+	};
+
+	this.handleWaitingForOpponentPieces = () => {
+		console.log("NYI");
+	};
+
+	//
+	// Only need to fill our side of the board, which consists of
+	// 4 rows of 10 columns.
+	//
+	this.handleWaitingForPieces = gameId => {
+		// Show buttons to let the player place the pieces
+		let buttonDOM = "<div>";
+
+		for (let i in pieces) {
+			buttonDOM += "<button id='place-" + pieces[i].code + "' class='piece-placement'>" + pieces[i].name + "</button>";
+		}
+
+		buttonDOM += "</div>";
+
+		$("#gameBoard").before(buttonDOM);
+
+		// Add function to the buttons
+		let piecesTotal = 0;
+		let board = [[], [], [], []];
+
+		for (let i in pieces) {
+			// Count the total amount of pieces while we're looping through them anyway
+			piecesTotal += pieces[i].count;
+
+			$("#place-" + pieces[i].code).on("click", function (e) {
+				// Remove highlight from old selection
+				if (-1 < placementSelected) {
+					$("#place-" + pieces[placementSelected].code).removeClass("selected");
+				}
+
+				// Highlight new selection
+				placementSelected = i;
+				$(this).addClass("selected");
+			});
+		}
+
+		// Bind placement function to the columns
+		for (let y = 6; y < 10; y++) {
+			for (let x = 0; x < 10; x++) {
+				$(document).on("click", "#col-" + y + "-" + x, function (e) {
+					if (placementSelected < 0) {
+						console.warn("No piece selected for placement");
+						return;
+					}
+
+					// Make sure a piece can be placed here
+					if ($(this).hasClass("has-unit")) {
+						console.warn("Column already contains a piece");
+						return;
+					}
+
+					// Add the classes to the column
+					$(this).addClass("has-unit");
+					$(this).addClass("has-" + pieces[placementSelected].code);
+
+					// Add to the board array to send
+					board[y - 6][x] = pieces[placementSelected].code;
+
+					// Disable placing this piece if the max has been reached
+					if (--pieces[placementSelected].count < 1) {
+						const btn = $("#place-" + pieces[placementSelected].code);
+
+						btn.removeClass("selected");
+						btn.attr("disabled", true);
+						placementSelected = -1;
+					}
+
+					// When no pieces are left, post the board
+					if (--piecesTotal < 1) {
+						api.postBoard(gameId, board);
+
+						// TODO: Reload page to go to the next step?
+					}
+				});
+
+				// Enable this column
+				this.changeBoardState({ enable: [{ x: x, y: y }] });
+			}
+		}
 	};
 
 	// State: {
 	//	enable: { "all" || [[x,y], ... ] }
 	//	disable: { "all" || [[x,y], ... ] }
 	//}
-	this.changeBoardState = function (state) {
+	this.changeBoardState = state => {
 		if (state.enable === "all") {
 			for (i = 0; i < 10; i++) {
 				for (n = 0; n < 10; n++) {
@@ -293,21 +341,7 @@ var GameController = function () {
 		}
 	};
 
-	this.calcDiff = function (i, j) {
-		const d = i - j;
-
-		return d;
-	}
-
-	this.getTile = function (row, col) {
-		return $(this.getTileString(row, col));
-	}
-
-	this.getTileString = function (row, col) {
-		return "#col-" + row + "-" + col;
-	}
-
-	this.moveTile = function (fromRow, fromCol, toRow, toCol) {
+	this.isValidMove = (fromRow, fromCol, toRow, toCol) => {
 		const from = this.getTile(fromRow, fromCol);
 		const to = this.getTile(toRow, toCol);
 
@@ -317,7 +351,7 @@ var GameController = function () {
 			return false;
 		}
 
-		lakes.forEach(function (lake) {
+		lakes.forEach(lake => {
 			if (lake[0] == toRow && lake[1] == toCol) {
 				console.warn("You are not allowed to put a piece on water!");
 				return false;
@@ -354,7 +388,7 @@ var GameController = function () {
 
 		// Move
 		return true;
-	}
+	};
 
 	this.isValidPath = (axis, fromRow, fromCol, toRow, toCol) => {
 		if (axis == "x") {
