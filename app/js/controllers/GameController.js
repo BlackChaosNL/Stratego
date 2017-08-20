@@ -1,4 +1,4 @@
-var GameController = () => {
+const GameController = function() {
 	let api;
 	let ac;
 	let placementSelected = -1;
@@ -42,6 +42,40 @@ var GameController = () => {
 		return "#col-" + row + "-" + col;
 	};
 
+	// State: {
+	//	enable: { "all" || [[x,y], ... ] }
+	//	disable: { "all" || [[x,y], ... ] }
+	//}
+	this.setBoardState = state => {
+		if (state.enable === "all") {
+			for (i = 0; i < 10; i++) {
+				for (n = 0; n < 10; n++) {
+					$('#col-' + i + '-' + n).removeClass('isDisabled');
+				}
+			}
+		}
+
+		if (state.disable === "all") {
+			for (i = 0; i < 10; i++) {
+				for (n = 0; n < 10; n++) {
+					$('#col-' + i + '-' + n).addClass('isDisabled');
+				}
+			}
+		}
+
+		if (Array.isArray(state.enable)) {
+			state.enable.forEach(function (item) {
+				$('#col-' + item.y + '-' + item.x).removeClass('isDisabled');
+			});
+		}
+
+		if (Array.isArray(state.disable)) {
+			state.disable.forEach(function (item) {
+				$('#col-' + item.y + '-' + item.x).addClass('isDisabled');
+			});
+		}
+	};
+
 	this.setGameState = (e, _this) => {
 		switch (e.message.state) {
 			case 'waiting_for_an_opponent': this.handleWaitingForOpponent(); break;
@@ -55,9 +89,6 @@ var GameController = () => {
 				console.log('Use the following message: ' + e.message.state);
 				break;
 		}
-	};
-
-	this.doBindFunctionToTiles = (event, func) => {
 	};
 
 	this.doDrawBoardHtml = () => {
@@ -79,6 +110,8 @@ var GameController = () => {
 	};
 
 	this.doDrawTiles = board => {
+		const that = this;
+
 		for (let y = 0; y < board.length; y++) {
 			const row = board[y];
 
@@ -91,15 +124,23 @@ var GameController = () => {
 					tile.addClass("has-unit");
 					tile.addClass("has-" + col);
 					tile.data("unit", col);
+
+					continue;
 				}
 
+				// Draw lakes
 				for (let i in lakes) {
 					if (lakes[i][0] == y && lakes[i][1] == x) {
 						tile.addClass("has-lake");
 
-						break;
+						continue;
 					}
 				}
+
+				// Make sure empty tiles are cleaned up
+				tile.removeClass("has-unit");
+				tile.removeClass("has-" + col);
+				tile.data("unit", null);
 			}
 		}
 	};
@@ -138,35 +179,21 @@ var GameController = () => {
 		};
 
 		// Enable the tiles which are usable
-		this.changeBoardState({
+		this.setBoardState({
 			enable: "all",
 			disable: lakes
 		});
 
-		// Add all units as given by the API
+		// Draw initial board state
+		this.doDrawTiles(board);
+
+		// Bind play functionality to the board
 		for (let y = 0; y < board.length; y++) {
-			const row = board[y];
-
-			for (let x = 0; x < row.length; x++) {
+			for (let x = 0; x < board[y].length; x++) {
+				const col = board[y][x];
 				const tile = that.getTile(y, x);
-				const col = row[x];
 
-				// Draw the units
-				if (col != " ") {
-					tile.addClass("has-unit");
-					tile.addClass("has-" + col);
-					tile.data("unit", col);
-				}
-
-				for (let i in lakes) {
-					if (lakes[i][0] == y && lakes[i][1] == x) {
-						tile.addClass("has-lake");
-						break;
-					}
-				}
-
-				// Bind a function to each tile
-				$(document).on("click", that.getTileString(y, x), function (e) {
+				$(document).on("click", that.getTileString(y, x), e => {
 					// Allow selecting a unit
 					if (col != " " && col != "O") {
 						// Deselect a previously selected unit
@@ -187,12 +214,15 @@ var GameController = () => {
 
 					// Allow the player to select a tile to move to
 					if (selected.state && (col == " " || col == "O")) {
-						const move = that.moveTile(selected.y, selected.x, y, x);
+						const valid = that.isValidMove(selected.y, selected.x, y, x);
 
-						if (!move) {
+						if (!valid) {
 							console.warn("That move is invalid");
 							return;
 						}
+
+						// Lock the board
+						that.setBoardState({disable: "all"});
 
 						// Tell the API something changed
 						api.postGameMoves(message.id, {
@@ -206,8 +236,14 @@ var GameController = () => {
 							}
 						}).then(post => {
 							// Process API response
-							console.log(post);
-						});
+							that.doDrawTiles(post.game.board);
+
+							// Unlock the board
+							that.setBoardState({
+								enable: "all",
+								disable: lakes
+							});
+						}).catch(e => console.error(e));
 					}
 				});
 			}
@@ -302,42 +338,8 @@ var GameController = () => {
 				});
 
 				// Enable this column
-				this.changeBoardState({ enable: [{ x: x, y: y }] });
+				this.setBoardState({ enable: [{ x: x, y: y }] });
 			}
-		}
-	};
-
-	// State: {
-	//	enable: { "all" || [[x,y], ... ] }
-	//	disable: { "all" || [[x,y], ... ] }
-	//}
-	this.changeBoardState = state => {
-		if (state.enable === "all") {
-			for (i = 0; i < 10; i++) {
-				for (n = 0; n < 10; n++) {
-					$('#col-' + i + '-' + n).removeClass('isDisabled');
-				}
-			}
-		}
-
-		if (state.disable === "all") {
-			for (i = 0; i < 10; i++) {
-				for (n = 0; n < 10; n++) {
-					$('#col-' + i + '-' + n).addClass('isDisabled');
-				}
-			}
-		}
-
-		if (Array.isArray(state.enable)) {
-			state.enable.forEach(function (item) {
-				$('#col-' + item.y + '-' + item.x).removeClass('isDisabled');
-			});
-		}
-
-		if (Array.isArray(state.disable)) {
-			state.disable.forEach(function (item) {
-				$('#col-' + item.y + '-' + item.x).addClass('isDisabled');
-			});
 		}
 	};
 
