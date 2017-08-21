@@ -1,8 +1,8 @@
-const GameController = function() {
+const GameController = function () {
 	let api;
 	let ac;
 	let placementSelected = -1;
-	let selection = { };
+	let selection = {};
 	const lakes = [
 		[4, 2],
 		[4, 3],
@@ -132,7 +132,7 @@ const GameController = function() {
 			}
 
 			// Lock the board
-			this.setBoardState({disable: "all"});
+			this.setBoardState({ disable: "all" });
 
 			// Tell the API something changed
 			api.postGameMoves(gameId, {
@@ -206,12 +206,15 @@ const GameController = function() {
 
 				// Draw the units
 				if (col != " ") {
-					tile.addClass("has-unit");
-					tile.addClass("has-" + col);
+					tile.addClass("has-unit has-" + col);
 					tile.data("unit", col);
 
 					continue;
 				}
+
+				// Make sure empty tiles are cleaned up
+				tile.removeClass();
+				tile.data("unit", null);
 
 				// Draw lakes
 				for (let i in lakes) {
@@ -221,11 +224,6 @@ const GameController = function() {
 						continue;
 					}
 				}
-
-				// Make sure empty tiles are cleaned up
-				tile.removeClass("has-unit");
-				tile.removeClass("has-" + col);
-				tile.data("unit", null);
 			}
 		}
 	};
