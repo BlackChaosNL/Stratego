@@ -1,6 +1,7 @@
 const GameController = function () {
 	let api;
 	let ac;
+	let gameId;
 	let placementSelected = -1;
 	let selection = {};
 	const lakes = [
@@ -231,7 +232,7 @@ const GameController = function () {
 	this.load = args => {
 		api = args.apiController;
 		ac = args.applicationController;
-
+		gameId = args.gameId;
 		const that = this;
 
 		api.getGameById(args.gameId).then(e => {
@@ -302,7 +303,9 @@ const GameController = function () {
 		let _this = this;
 		// set socket to change gamestate if required.
 		api.socket.on('statechanged', function (game) {
-			_this.setGameState(game, _this);
+			if (_this.gameId === game.id) {
+				_this.setGameState(game, _this);
+			}
 		});
 	};
 
@@ -312,7 +315,9 @@ const GameController = function () {
 		let _this = this;
 		// set socket to change gamestate if required.
 		api.socket.on('statechanged', function (game) {
-			_this.setGameState(game, _this);
+			if (_this.gameId === game.id) {
+				_this.setGameState(game, _this);
+			}
 		});
 	};
 
@@ -322,8 +327,10 @@ const GameController = function () {
 		$('div.message').html('Player hasn\'t posted their board yet, please wait, we\'ll refresh automatically!').addClass("isInfo");
 		let _this = this;
 		// set socket to change gamestate if required.
-		this.api.socket.on('statechanged', function (game) {
-			_this.setGameState(game, _this);
+		api.socket.on('statechanged', function (game) {
+			if (_this.gameId === game.id) {
+				_this.setGameState(game, _this);
+			}
 		});
 	};
 
