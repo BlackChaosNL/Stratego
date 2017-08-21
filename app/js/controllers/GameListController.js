@@ -8,7 +8,8 @@ var GameListController = function () {
 		this.ac = args.applicationController;
 		var _this = this;
 		this.setSideBarGameList();
-		this.api.socket.on('statechange', function () {
+		this.api.socket.on('statechange', function (x) {
+			console.log(x);
 			_this.setSideBarGameList();
 		});
 		$("#content").load(view.intro);

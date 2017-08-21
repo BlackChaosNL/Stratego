@@ -84,7 +84,7 @@ const GameController = function () {
 		if ($("#placebar").length) { $("#placebar").remove(); }
 
 		// Clear the message div
-		$("#content .message").html("");
+		$("#content .message").html("").removeClass();
 
 		// Switch to the correct handler
 		switch (e.message.state) {
@@ -298,19 +298,33 @@ const GameController = function () {
 	this.handleOpponentTurn = () => {
 		// Draw the board HTML
 		this.doDrawBoardHtml();
-
-		console.log("NYI");
+		$('div.message').html('Another players turn, we\'ll be right back for you to play!').addClass("isInfo");
+		let _this = this;
+		// set socket to change gamestate if required.
+		api.socket.on('statechanged', function (game) {
+			_this.setGameState(game, _this);
+		});
 	};
 
 	this.handleWaitingForOpponent = () => {
+		this.doDrawBoardHtml();
 		$('div.message').html('We haven\'t found a player yet, please be patient!').addClass("isInfo");
+		let _this = this;
+		// set socket to change gamestate if required.
+		api.socket.on('statechanged', function (game) {
+			_this.setGameState(game, _this);
+		});
 	};
 
 	this.handleWaitingForOpponentPieces = () => {
 		// Draw the board HTML
 		this.doDrawBoardHtml();
-
-		console.log("NYI");
+		$('div.message').html('Player hasn\'t posted their board yet, please wait, we\'ll refresh automatically!').addClass("isInfo");
+		let _this = this;
+		// set socket to change gamestate if required.
+		this.api.socket.on('statechanged', function (game) {
+			_this.setGameState(game, _this);
+		});
 	};
 
 	//
