@@ -165,10 +165,8 @@ var ApiController = function () {
 		return xhrRequest({
 			method: this.methods.post,
 			url: this.baseUri + this.routes.games + "/" + id + "/moves?api_key=" + this.apiKey,
-			params: {
-
-			}
-		}).then(function (e) { }, function (error) { });
+			params: move
+		}).then(r => { return JSON.parse(r) }, e => console.log(e));
 	};
 
 	this.setApiKey = function (apiKey) {

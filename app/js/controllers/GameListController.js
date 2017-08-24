@@ -8,6 +8,10 @@ var GameListController = function () {
 		this.ac = args.applicationController;
 		var _this = this;
 		this.setSideBarGameList();
+		this.api.socket.on('statechange', function (x) {
+			console.log(x);
+			_this.setSideBarGameList();
+		});
 		$("#content").load(view.intro);
 	};
 
@@ -38,9 +42,6 @@ var GameListController = function () {
 				_this.api.deleteAllGames().then(function () { _this.setSideBarGameList(); });
 			});
 			e.message.getGameList().forEach(function (i) {
-				_this.api.socket.on('statechange', function () {
-					_this.setSideBarGameList();
-				});
 				menu.append('<li><a href="#" id="' + i.id + '">vs ' + i.opponent + ' <span class="new badge" data-badge-caption="">' + i.state + '</span></a></li>');
 				$('#' + i.id).click(function () {
 					_this.ac.switchController({
